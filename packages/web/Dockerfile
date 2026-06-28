@@ -6,7 +6,7 @@ RUN corepack enable && corepack prepare pnpm@11.7.0 --activate
 
 COPY . .
 
-RUN pnpm install --frozen-lockfile
+RUN pnpm install
 
 ARG VITE_API_URL=
 ENV VITE_API_URL=$VITE_API_URL
