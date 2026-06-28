@@ -6,7 +6,7 @@ role="${ROLE:-api}"
 case "$role" in
     api)
         php artisan migrate --force || true
-        php artisan optimize
+        php artisan optimize || true
         php artisan storage:link || true
         php artisan queue:restart || true
         php-fpm -D

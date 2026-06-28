@@ -1,11 +1,12 @@
-# Production-ish stack for GuessEat.
+# Production stack for GuessEat.
 # Used by Coolify or standalone docker. Mobile builds are NOT here (use EAS).
 #
 # Usage:
 #   docker compose up -d
 #
-# Configure env by copying packages/api/.env.example to packages/api/.env
-# and setting production values (see bottler notes at top of that file).
+# All env vars are injected by Coolify (via Environment Variables UI).
+# Coolify creates a .env file and passes it via --env-file.
+# The env_file: .env directive below loads those vars into each container.
 
 services:
   postgres:
@@ -41,8 +42,7 @@ services:
       args:
         ROLE: api
     restart: unless-stopped
-    env_file:
-      - ./packages/api/.env
+    env_file: .env
     environment:
       DB_HOST: postgres
       REDIS_HOST: redis
@@ -52,8 +52,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    ports:
-      - "8081:8080"
+    expose:
+      - "8080"
 
   queue:
     build:
@@ -61,8 +61,7 @@ services:
       args:
         ROLE: queue
     restart: unless-stopped
-    env_file:
-      - ./packages/api/.env
+    env_file: .env
     environment:
       DB_HOST: postgres
       REDIS_HOST: redis
@@ -76,8 +75,7 @@ services:
       args:
         ROLE: scheduler
     restart: unless-stopped
-    env_file:
-      - ./packages/api/.env
+    env_file: .env
     environment:
       DB_HOST: postgres
       REDIS_HOST: redis
@@ -92,16 +90,15 @@ services:
   #     args:
   #       ROLE: reverb
   #   restart: unless-stopped
-  #   env_file:
-  #     - ./packages/api/.env
+  #   env_file: .env
   #   environment:
   #     DB_HOST: postgres
   #     REDIS_HOST: redis
   #     ROLE: reverb
   #   depends_on:
   #     - api
-  #   ports:
-  #     - "8080:8080"
+  #   expose:
+  #     - "8080"
 
   web:
     build:
@@ -112,8 +109,8 @@ services:
     restart: unless-stopped
     depends_on:
       - api
-    ports:
-      - "80:80"
+    expose:
+      - "80"
 
 volumes:
   postgres_data:
