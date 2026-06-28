@@ -1,0 +1,120 @@
+# Production-ish stack for GuessEat.
+# Used by Coolify or standalone docker. Mobile builds are NOT here (use EAS).
+#
+# Usage:
+#   docker compose up -d
+#
+# Configure env by copying packages/api/.env.example to packages/api/.env
+# and setting production values (see bottler notes at top of that file).
+
+services:
+  postgres:
+    image: postgis/postgis:16-3.5
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-guesseat}
+      POSTGRES_USER: ${DB_USERNAME:-guesseat}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-guesseat}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--maxmemory", "200mb", "--maxmemory-policy", "allkeys-lru"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./packages/api
+      args:
+        ROLE: api
+    restart: unless-stopped
+    env_file:
+      - ./packages/api/.env
+    environment:
+      DB_HOST: postgres
+      REDIS_HOST: redis
+      ROLE: api
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "8000:8080"
+
+  queue:
+    build:
+      context: ./packages/api
+      args:
+        ROLE: queue
+    restart: unless-stopped
+    env_file:
+      - ./packages/api/.env
+    environment:
+      DB_HOST: postgres
+      REDIS_HOST: redis
+      ROLE: queue
+    depends_on:
+      - api
+
+  scheduler:
+    build:
+      context: ./packages/api
+      args:
+        ROLE: scheduler
+    restart: unless-stopped
+    env_file:
+      - ./packages/api/.env
+    environment:
+      DB_HOST: postgres
+      REDIS_HOST: redis
+      ROLE: scheduler
+    depends_on:
+      - api
+
+  # Reverb WebSocket server (Phase 3 — Duels). Uncomment when enabling.
+  # reverb:
+  #   build:
+  #     context: ./packages/api
+  #     args:
+  #       ROLE: reverb
+  #   restart: unless-stopped
+  #   env_file:
+  #     - ./packages/api/.env
+  #   environment:
+  #     DB_HOST: postgres
+  #     REDIS_HOST: redis
+  #     ROLE: reverb
+  #   depends_on:
+  #     - api
+  #   ports:
+  #     - "8080:8080"
+
+  web:
+    build:
+      context: .
+      dockerfile: ./packages/web/Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-}
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "5173:80"
+
+volumes:
+  postgres_data:
+  redis_data:

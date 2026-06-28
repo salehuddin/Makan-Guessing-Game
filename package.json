@@ -1,0 +1,25 @@
+{
+  "name": "guesseat",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GuessEat.my — A geo-guessing game for Malaysian restaurants",
+  "scripts": {
+    "dev": "turbo dev",
+    "dev:api": "turbo dev --filter=@guesseat/api",
+    "dev:web": "turbo dev --filter=@guesseat/web",
+    "dev:mobile": "turbo dev --filter=@guesseat/mobile",
+    "build": "turbo build",
+    "build:shared": "turbo build --filter=@guesseat/shared",
+    "lint": "turbo lint",
+    "test": "turbo test",
+    "clean": "turbo clean"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2"
+  },
+  "packageManager": "pnpm@11.7.0",
+  "engines": {
+    "node": ">=20"
+  }
+}

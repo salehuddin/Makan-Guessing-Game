@@ -1,0 +1,12 @@
+{
+    "name": "@guesseat/api",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "php artisan serve --host=127.0.0.1 --port=8000",
+        "build": "php artisan config:cache && php artisan route:cache",
+        "lint": "vendor/bin/pint --test",
+        "test": "php artisan test",
+        "clean": "php artisan config:clear && php artisan route:clear && php artisan cache:clear"
+    }
+}

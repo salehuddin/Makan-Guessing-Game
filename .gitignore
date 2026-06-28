@@ -1,0 +1,74 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Turbo
+.turbo/
+
+# Environment
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# opencode (machine-specific MCP config; recreate via docs/setup.md)
+opencode.json
+opencode.jsonc
+.opencode/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Laravel / PHP
+packages/api/vendor/
+packages/api/storage/app/public/
+packages/api/storage/logs/*
+packages/api/storage/framework/cache/*
+packages/api/storage/framework/sessions/*
+packages/api/storage/framework/views/*
+packages/api/.env
+packages/api/.env.testing
+packages/api/bootstrap/cache/
+packages/api/.phpunit.result.cache
+
+# Expo / React Native
+packages/mobile/.expo/
+packages/mobile/dist/
+packages/mobile/web-build/
+packages/mobile/npm-debug.*
+packages/mobile/*.jks
+packages/mobile/*.p8
+packages/mobile/*.p12
+packages/mobile/*.key
+packages/mobile/*.mobileprovision
+packages/mobile/ios/
+packages/mobile/android/
+packages/mobile/app.json.bak
+
+# Web (Vite)
+packages/web/dist/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Testing
+coverage/
+.nyc_output/

@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "GuessEat",
+    "slug": "guesseat",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "scheme": "guesseat",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "my.guesseat.app"
+    },
+    "android": {
+      "package": "my.guesseat.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#0f172a"
+      }
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "react-native-google-mobile-ads",
+        {
+          "android_app_id": "ca-app-pub-3940256099942544~3347511713",
+          "ios_app_id": "ca-app-pub-3940256099942544~1458002511"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": ""
+      }
+    }
+  }
+}
