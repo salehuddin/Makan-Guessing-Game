@@ -26,7 +26,9 @@ RUN apk add --no-cache \
     && pecl install redis && docker-php-ext-enable redis \
     && apk del $PHPIZE_DEPS
 
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
+    && php composer-setup.php --install-dir=/usr/bin --filename=composer --quiet \
+    && php -r "unlink('composer-setup.php');"
 
 COPY composer.json composer.lock ./
 ENV COMPOSER_MEMORY_LIMIT=-1
