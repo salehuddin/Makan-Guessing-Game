@@ -7,6 +7,7 @@ RUN corepack enable && corepack prepare pnpm@11.7.0 --activate
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml turbo.json ./
 COPY packages/shared ./packages/shared
 COPY packages/web ./packages/web
+COPY packages/mobile/package.json ./packages/mobile/package.json
 
 RUN pnpm install --frozen-lockfile
 
