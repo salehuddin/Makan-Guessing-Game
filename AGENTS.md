@@ -54,3 +54,15 @@ docs/         Project documentation (setup, architecture, decisions, roadmap)
 - Web dev: `pnpm dev:web`
 - Mobile dev: `pnpm dev:mobile`
 - All: `pnpm dev`
+- Docker (local full stack): `docker compose up --build`
+- Docker (stop): `docker compose down` (add `-v` to wipe volumes)
+
+## Deployment
+
+- **Host:** Contabo VPS (109.123.239.88)
+- **Platform:** Coolify 4.1.2
+- **Stack:** Docker Compose (api, web, queue, scheduler, postgres/PostGIS, redis)
+- **CI:** GitHub Actions (ci.yml — shared lint, web build+lint, mobile TS, Laravel tests+Pint)
+- **Domains:** guesseat.my (web), api.guesseat.my (API)
+- **Env vars:** Managed in Coolify UI, injected via `env_file: .env` in docker-compose.yml
+- **Deploy:** Push to GitHub `main` branch → Click Redeploy in Coolify (or enable auto-deploy)

@@ -94,3 +94,21 @@ Locked decisions for GuessEat. Update this file as new choices are made.
 - **Date:** 2026-06-22
 - **Decision:** Implement `Filament\Models\Contracts\HasName` on the User model with `getFilamentName(): string` returning `$this->username`.
 - **Rationale:** The `users` table uses `username` (not `name`), which caused a `TypeError` in Filament's `getUserName()` when rendering the avatar component. Filament 5's documented approach is to implement `HasName` and define `getFilamentName()`.
+
+## D15 — Production deployment: Coolify 4 on Contabo VPS
+
+- **Date:** 2026-06-29
+- **Decision:** Deploy GuessEat on a Contabo VPS (Ubuntu) via Coolify 4.1.2 with Docker Compose. Code pushed to GitHub (salehuddin/Makan-Guessing-Game), Coolify pulls from `main` branch and deploys the `docker-compose.yml` stack.
+- **Rationale:** Coolify is a self-hosted Heroku/Netlify alternative that provides a clean web UI, Let's Encrypt SSL, GitHub integration, and Docker Compose support — no need to manage Nginx configs, SSL certs, or CI/CD manually. Contabo offers affordable VPS with good specs for Malaysia. The docker-compose.yml defines all services (api, web, queue, scheduler, postgres/PostGIS, redis) with health checks, persistent volumes, and env_file injection. Environment variables are managed in Coolify UI and injected via .env file. Ports use `expose:` (internal Docker network) instead of `ports:` (host binding) to avoid conflicts with Coolify's proxy.
+
+## D16 — Credential management: DB-stored over .env
+
+- **Date:** 2026-06-28
+- **Decision:** Store API keys (Twilio, Google Maps, R2, etc.) as JSONB in `integration_settings.settings` column instead of in `.env`. Credential fields are defined per integration via `CREDENTIAL_FIELDS` constant on `IntegrationSetting` model. `CredentialService` resolves credentials DB-first, falling back to `getenv()`. `bootstrapConfigs()` overrides Laravel config values at boot. Admin SPA integration cards show editable credential input fields with masked secrets.
+- **Rationale:** The user wanted credentials editable from the admin UI without SSH access to the server. DB storage with masked display (`••••…last4`) allows non-technical admins to configure integrations. Secrets-only changes are preserved with `••••`-prefixed skip logic. Bootstrap wraps in try-catch to avoid failures during migrations/early boot. Existing services (TwilioOtpService, GooglePlacesService) work without changes.
+
+## D17 — Production Docker: PHP 8.4 + Node 22
+
+- **Date:** 2026-06-29
+- **Decision:** Use `php:8.4-fpm-alpine` and `node:22-alpine` for production Docker images. API Dockerfile installs extensions from source, downloads Composer directly (not COPY from Composer image), and serves via nginx. Web Dockerfile copies full monorepo, runs `pnpm install`, builds shared+web, and serves dist via nginx.
+- **Rationale:** Symfony 8.1 packages require PHP ≥8.4.1; pnpm 11.7 requires Node ≥22.13. The Composer:2 image couldn't be pulled reliably on Coolify, so direct download is more reliable. Multi-service pattern (api/queue/scheduler) reuses the same API image with different entrypoint ROLEs.

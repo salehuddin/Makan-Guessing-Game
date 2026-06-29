@@ -12,7 +12,7 @@
 | Up next | Seed 130 more venues, configure R2/Redis, publish Daily Challenge, manual admin QA, ML Kit face blur, launch |
 | MVP gate | Backend API + web/mobile UIs + admin backoffice all functional |
 
-**Last updated:** 2026-06-26 (Roadmap reconciled: Filament decommissioned; SPA admin complete with 32 new tests; 141 tests total; Settings/Integrations/Daily Challenges/Game Modes/Users/Venues/Photos all in React SPA; ML Kit remains pending; 141 tests passing)
+**Last updated:** 2026-06-29 (Deployed on Contabo VPS via Coolify 4.1.2; Docker Compose stack with API/web/queue/scheduler/postgres/redis; domains: api.guesseat.my + guesseat.my; GitHub CI/CD active; 141 tests passing)
 
 ## Built so far
 
@@ -35,10 +35,12 @@
 - **Mobile** — Expo SDK 56 + React Native 0.86 + expo-router + TanStack Query + Zustand; 5 screens: Login, Home, Play, Daily, Upload; typechecks clean; handles optional category/submitter and hidden answers
 - **Docs** — architecture, setup, decisions, roadmap, php-setup, tech-stack
 - **Tooling** — pnpm 11.7, Turbo 2.3, Pint (passing), PHPUnit (141/141 passing)
+- **Deployment** — Contabo VPS (109.123.239.88) + Coolify 4.1.2; Docker Compose stack (api, web, queue, scheduler, postgres/PostGIS, redis); GitHub CI/CD (Shared TS lint, Web build+lint, Mobile TS, Laravel tests+Pint); domains: guesseat.my (web) + api.guesseat.my (API); env_file: .env for Coolify env var injection; production Dockerfiles for PHP 8.4 and Node 22
+- **Credential management** — DB-backed credentials (IntegrationSetting → CredentialService); admin SPA input fields with masked secrets; 13 integrations with CREDENTIAL_FIELDS schema; bootstrapConfigs() overrides Laravel config at boot
 
 ## Currently working on
 
-Phase 1 base game architecture is complete. Remaining launch blockers: venue/photo seeding expansion, production storage/cache setup, manual admin QA, ML Kit face blur, and launch prep.
+Phase 1 base game architecture is complete. Production deployment on Coolify VPS is done. Remaining launch blockers: venue/photo seeding expansion, production R2/Redis credentials, manual admin QA, ML Kit face blur, and launch prep.
 
 ## Phases
 
@@ -83,7 +85,10 @@ Phase 1 base game architecture is complete. Remaining launch blockers: venue/pho
 - [x] Submitter XP: base + pioneer + category pioneer
 - [x] Moderation queue (admin)
 - [ ] Seed 150+ Klang Valley venues across all 7 categories
-- [ ] Configure production R2 credentials and Redis/cache setup
+- [ ] Configure production R2 credentials (credential management UI ready)
+- [x] Production deployment: Coolify VPS + Docker Compose + GitHub CI/CD
+- [x] Google Maps API integration (venue autocomplete + place lookup)
+- [x] Credential management: DB-stored API keys via admin SPA
 - [ ] Manual admin QA click-through for Settings, Integrations, Game Modes, Daily Challenges, Photos, Venues, Guesses, Users
 - [ ] Launch on r/malaysia
 
