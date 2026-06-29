@@ -16,7 +16,7 @@ jobs:
           version: 11.7.0
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @guesseat/shared lint
@@ -32,7 +32,7 @@ jobs:
           version: 11.7.0
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @guesseat/web lint
@@ -49,7 +49,7 @@ jobs:
           version: 11.7.0
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @guesseat/mobile lint
@@ -93,11 +93,11 @@ jobs:
       - name: Composer validate
         run: composer validate --strict --no-check-publish
         working-directory: packages/api
-      - name: Composer audit
-        run: composer audit
-        working-directory: packages/api
       - name: Install Composer deps
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
+        working-directory: packages/api
+      - name: Composer audit
+        run: composer audit
         working-directory: packages/api
       - name: Pint
         run: vendor/bin/pint --test
