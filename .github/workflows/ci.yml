@@ -90,6 +90,9 @@ jobs:
           php-version: "8.4"
           extensions: pdo_pgsql, pgsql, gd, exif, zip, redis
           coverage: none
+      - name: Create bootstrap/cache
+        run: mkdir -p bootstrap/cache
+        working-directory: packages/api
       - name: Composer validate
         run: composer validate --strict --no-check-publish
         working-directory: packages/api
