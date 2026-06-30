@@ -14,6 +14,7 @@ interface User {
   phone: string | null;
   phone_verified_at: string | null;
   email: string | null;
+  email_verified_at: string | null;
   is_admin: boolean;
   trust_tier: string;
   xp_total: number;
@@ -29,6 +30,9 @@ interface User {
   profile_bio?: string | null;
   avatar_url?: string | null;
   cover_url?: string | null;
+  language?: string;
+  notifications_enabled?: boolean;
+  profile_visibility?: string;
 }
 
 interface AuthContextValue {
@@ -40,6 +44,11 @@ interface AuthContextValue {
   sendPhoneOtp: (phone: string) => Promise<void>;
   verifyPhoneOtp: (phone: string, code: string) => Promise<void>;
   updateProfile: (profile: Partial<Pick<User, "username" | "district" | "profile_bio" | "avatar_url" | "cover_url">>) => Promise<User>;
+  updatePassword: (currentPassword: string, newPassword: string) => Promise<void>;
+  updateEmail: (email: string, password: string) => Promise<void>;
+  updatePreferences: (prefs: Partial<Pick<User, "language" | "notifications_enabled" | "profile_visibility">>) => Promise<User>;
+  uploadImage: (type: "avatar" | "cover", file: File) => Promise<User>;
+  deleteAccount: (password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -112,6 +121,50 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return data.user;
   }, []);
 
+  const updatePassword = useCallback(async (currentPassword: string, newPassword: string) => {
+    await api("/user/password", {
+      method: "PATCH",
+      body: JSON.stringify({ current_password: currentPassword, password: newPassword, password_confirmation: newPassword }),
+    });
+  }, []);
+
+  const updateEmail = useCallback(async (email: string, password: string) => {
+    const data = await api<{ user: User }>("/user/email", {
+      method: "PATCH",
+      body: JSON.stringify({ email, password }),
+    });
+    setUser(data.user);
+  }, []);
+
+  const updatePreferences = useCallback(async (prefs: Partial<Pick<User, "language" | "notifications_enabled" | "profile_visibility">>) => {
+    const data = await api<{ user: User }>("/user/preferences", {
+      method: "PUT",
+      body: JSON.stringify(prefs),
+    });
+    setUser(data.user);
+    return data.user;
+  }, []);
+
+  const uploadImage = useCallback(async (type: "avatar" | "cover", file: File) => {
+    const formData = new FormData();
+    formData.append("image", file);
+    const data = await api<{ user: User }>(`/user/${type}`, {
+      method: "POST",
+      body: formData,
+    });
+    setUser(data.user);
+    return data.user;
+  }, []);
+
+  const deleteAccount = useCallback(async (password: string) => {
+    await api("/user", {
+      method: "DELETE",
+      body: JSON.stringify({ password }),
+    });
+    clearToken();
+    setUser(null);
+  }, []);
+
   const logout = useCallback(async () => {
     try {
       await api("/auth/logout", { method: "POST" });
@@ -133,6 +186,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         sendPhoneOtp,
         verifyPhoneOtp,
         updateProfile,
+        updatePassword,
+        updateEmail,
+        updatePreferences,
+        uploadImage,
+        deleteAccount,
         logout,
       }}
     >

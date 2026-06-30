@@ -12,7 +12,7 @@
 | Up next | Seed 130 more venues, configure R2/Redis, publish Daily Challenge, manual admin QA, ML Kit face blur, launch |
 | MVP gate | Backend API + web/mobile UIs + admin backoffice all functional |
 
-**Last updated:** 2026-06-29 (Deployed on Contabo VPS via Coolify 4.1.2; Docker Compose stack with API/web/queue/scheduler/postgres/redis; domains: api.guesseat.my + guesseat.my; GitHub CI/CD active; 141 tests passing)
+**Last updated:** 2026-06-30 (Profile settings page with 5 sections; user preferences system; max-w-lg desktop layout; Docker Compose stack on Contabo VPS via Coolify 4.1.2; 141 tests passing)
 
 ## Built so far
 
@@ -32,6 +32,7 @@
 - **Storage** — Cloudflare R2 S3-compatible disk configured (credentials pending)
 - **Shared** — `@guesseat/shared` with `PHOTO_CATEGORIES` (7), scoring formulas, types, 10 badges
 - **Web** — React 19 + Vite 8 + TanStack Router + TanStack Query + Tailwind 4; 6 screens: Login, Home, Play, Daily Challenge, Upload, Admin; mobile-responsive; handles optional category/submitter and hidden answers
+- **Profile settings** — Full settings page at `/profile/edit` with 5 collapsible sections: Profile (avatar/cover upload, username, location, bio), Account (email change with verification badge, phone display), Security (password change with show/hide toggles), Preferences (language EN/MS/ZH, notification toggle, profile visibility), Danger Zone (sign out, account deletion with confirmation). Backend endpoints: `PATCH /user/password`, `PATCH /user/email`, `POST /user/avatar`, `POST /user/cover`, `PUT /user/preferences`, `DELETE /user`. New migration adds `language`, `notifications_enabled`, `profile_visibility` columns to users table.
 - **Mobile** — Expo SDK 56 + React Native 0.86 + expo-router + TanStack Query + Zustand; 5 screens: Login, Home, Play, Daily, Upload; typechecks clean; handles optional category/submitter and hidden answers
 - **Docs** — architecture, setup, decisions, roadmap, php-setup, tech-stack
 - **Tooling** — pnpm 11.7, Turbo 2.3, Pint (passing), PHPUnit (141/141 passing)

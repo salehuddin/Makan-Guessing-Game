@@ -6,7 +6,7 @@ export function AppHeader() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-white/80 px-6 py-4 backdrop-blur-md">
-      <div className="mx-auto flex w-full max-w-md items-center justify-between">
+      <div className="mx-auto flex w-full max-w-lg items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-chili text-xl font-bold text-white">
             G

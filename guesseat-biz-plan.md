@@ -802,27 +802,30 @@ CREATE INDEX idx_photos_phash ON photos(phash);
 
 ### Phase 0: Foundation (Weeks 1–4)
 
-- [ ] PostgreSQL schema + PostGIS + category CHECK constraints
-- [ ] Laravel API skeleton: venues CRUD, photo upload endpoint with category
-- [ ] Laravel Fortify + Twilio phone auth
-- [ ] React web app skeleton: TanStack Router + Query + Vite
-- [ ] React Native skeleton: Expo + React Navigation + TanStack Query + ML Kit
-- [ ] Turborepo monorepo: `packages/shared`, `packages/web`, `packages/mobile`
-- [ ] Cloudflare R2 bucket configuration
-- [ ] EXIF extraction module (Laravel)
-- [ ] pHash generation + comparison module (Laravel)
+- [x] PostgreSQL schema + PostGIS + category CHECK constraints
+- [x] Laravel API skeleton: venues CRUD, photo upload endpoint with category
+- [x] Laravel Sanctum + Twilio phone auth (D10: switched from Fortify to Sanctum for API-only)
+- [x] React web app skeleton: TanStack Router + Query + Vite
+- [x] React Native skeleton: Expo + React Navigation + TanStack Query + ML Kit
+- [x] Turborepo monorepo: `packages/shared`, `packages/web`, `packages/mobile`
+- [x] Cloudflare R2 bucket configuration
+- [x] EXIF extraction module (Laravel)
+- [x] pHash generation + comparison module (Laravel)
 
 ### Phase 1: MVP Launch (Weeks 5–8)
 
-- [ ] Photo upload flow: camera → ML Kit face blur → category select → venue select → upload
-- [ ] Classic Guess mode: multiple-choice, 4 options, scoring, category tag display
-- [ ] Daily Challenge: curated 5-photo set, category mix, Redis cached
-- [ ] Image selection: seen-once exclusion + freshness decay + staleness protection
-- [ ] Basic submitter XP (base + pioneer + category pioneer bonuses)
-- [ ] All validation gates: EXIF GPS, pHash, blur detection, client-side face blur
-- [ ] Trust tiers: New + Verified
-- [x] Moderation queue (admin panel) — **Implemented via Filament v5 at `/admin`**. Provides CRUD for Users, Venues, Photos, and Guesses; photo approve/reject actions with XP awarding; admin-only access via `is_admin` flag. See `docs/decisions.md` (D12) and `docs/tech-stack.md`.
+- [x] Photo upload flow: photo picker/camera → category select → venue autocomplete → upload
+- [ ] Client-side ML Kit face blur before upload
+- [x] Classic Guess mode: 4 distractors, full scoring, category tag
+- [x] Daily Challenge: DB-backed curated set with admin generate/publish flow
+- [x] `POST /api/photos` stores raw to R2, inserts `pending`, dispatches `ProcessPhotoJob`
+- [x] `ProcessPhotoJob`: EXIF GPS validation, pHash dedup, Laplacian blur, thumbnail, status
+- [x] Basic submitter XP (base + pioneer + category pioneer bonuses)
+- [x] All validation gates: EXIF GPS, pHash, blur detection
+- [x] Trust tiers: New + Verified
+- [x] Moderation queue (admin React SPA at `/admin`; photo approve/reject/quarantine; admin CRUD for Users, Venues, Photos, Guesses, Game Modes, Daily Challenges, Settings, Integrations, Dashboard, Ads, Translations, XP Events)
 - [ ] Seed 150+ restaurants manually across all categories
+- [x] User profile settings page: 5 sections (Profile, Account, Security, Preferences, Danger Zone); avatar/cover file upload; email/password change; language (EN/MS/ZH), notifications, profile visibility
 - [ ] Launch on r/malaysia
 
 ### Phase 2: Engagement (Weeks 9–14)

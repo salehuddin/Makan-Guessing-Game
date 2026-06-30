@@ -43,7 +43,7 @@ function RootComponent() {
   return (
     <div className="min-h-full flex flex-col bg-base">
       {user && !isLoginPage && <AppHeader />}
-      <main className="flex-1 flex flex-col max-w-md mx-auto w-full">
+      <main className="flex-1 flex flex-col max-w-lg mx-auto w-full">
         <Outlet />
       </main>
       {user && !isLoginPage && <BottomNav />}

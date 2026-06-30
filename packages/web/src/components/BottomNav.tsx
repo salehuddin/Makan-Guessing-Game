@@ -13,7 +13,7 @@ export function BottomNav() {
   const location = useLocation();
 
   return (
-    <div className="fixed bottom-5 left-1/2 z-50 w-[90%] max-w-md -translate-x-1/2">
+    <div className="fixed bottom-5 left-1/2 z-50 w-[90%] max-w-lg -translate-x-1/2">
       <nav className="glass-effect flex items-center justify-around rounded-[2.25rem] border border-white/70 p-2 shadow-2xl">
         {items.map((item) => {
           const Icon = item.icon;

@@ -112,3 +112,21 @@ Locked decisions for GuessEat. Update this file as new choices are made.
 - **Date:** 2026-06-29
 - **Decision:** Use `php:8.4-fpm-alpine` and `node:22-alpine` for production Docker images. API Dockerfile installs extensions from source, downloads Composer directly (not COPY from Composer image), and serves via nginx. Web Dockerfile copies full monorepo, runs `pnpm install`, builds shared+web, and serves dist via nginx.
 - **Rationale:** Symfony 8.1 packages require PHP ≥8.4.1; pnpm 11.7 requires Node ≥22.13. The Composer:2 image couldn't be pulled reliably on Coolify, so direct download is more reliable. Multi-service pattern (api/queue/scheduler) reuses the same API image with different entrypoint ROLEs.
+
+## D18 — Profile settings: sectioned settings page over single form
+
+- **Date:** 2026-06-30
+- **Decision:** Replace the single-form profile edit page with a sectioned settings page using collapsible accordion sections: Profile, Account, Security, Preferences, Danger Zone. Each section is independently expandable with its own save flow and error/success states.
+- **Rationale:** The original profile edit page only had 5 fields (username, location, bio, avatar URL, cover URL). Users expected account management (email, password), preferences (language, notifications, privacy), and account deletion. A single form would be too long and mix unrelated concerns. Collapsible sections keep the page scannable and each section self-contained. Also added file upload for avatar/cover images (not just URL input).
+
+## D19 — User preferences: DB columns over separate table
+
+- **Date:** 2026-06-30
+- **Decision:** Add `language` (varchar 5, default 'en'), `notifications_enabled` (boolean, default true), and `profile_visibility` (varchar 10, default 'public') directly on the `users` table instead of a separate `user_preferences` table.
+- **Rationale:** These are simple key-value preferences tied 1:1 to a user. A separate table would add JOIN complexity for no benefit. The fields are nullable with sensible defaults, so existing rows need no migration data. Supported languages: `en`, `ms`, `zh`. Visibility options: `public`, `private`.
+
+## D20 — App width: max-w-lg (32rem) for mobile-first desktop layout
+
+- **Date:** 2026-06-30
+- **Decision:** Set the main content wrapper, header, and bottom nav to `max-w-lg` (32rem / 512px) on desktop, up from `max-w-md` (28rem / 448px).
+- **Rationale:** The previous 28rem felt cramped on desktop, especially for the settings page with form fields and toggle rows. 32rem gives breathing room for inputs and labels while still maintaining a mobile-first phone-like layout on wide screens. Applied consistently to `__root.tsx` main wrapper, `AppHeader` inner container, and `BottomNav` bar.

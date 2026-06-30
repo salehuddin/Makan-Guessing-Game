@@ -24,6 +24,7 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TranslationController;
 use App\Http\Controllers\UserPhoneController;
 use App\Http\Controllers\UserProfileController;
+use App\Http\Controllers\UserSettingsController;
 use App\Http\Controllers\VenueController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -43,6 +44,12 @@ Route::get('/translations', [TranslationController::class, 'index']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', fn (Request $request) => ['user' => $request->user()]);
     Route::patch('/user', [UserProfileController::class, 'update']);
+    Route::patch('/user/password', [UserSettingsController::class, 'updatePassword']);
+    Route::patch('/user/email', [UserSettingsController::class, 'updateEmail']);
+    Route::post('/user/avatar', [UserSettingsController::class, 'uploadAvatar']);
+    Route::post('/user/cover', [UserSettingsController::class, 'uploadCover']);
+    Route::put('/user/preferences', [UserSettingsController::class, 'updatePreferences']);
+    Route::delete('/user', [UserSettingsController::class, 'destroy']);
     Route::post('/user/phone/send-otp', [UserPhoneController::class, 'send']);
     Route::post('/user/phone/verify-otp', [UserPhoneController::class, 'verify']);
 
