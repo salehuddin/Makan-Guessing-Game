@@ -17,6 +17,7 @@ import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as DailyRouteImport } from './routes/daily'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProfileIndexRouteImport } from './routes/profile/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as ProfileEditRouteImport } from './routes/profile.edit'
 import { Route as AdminXpEventsRouteImport } from './routes/admin/xp-events'
@@ -71,6 +72,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileIndexRoute = ProfileIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProfileRoute,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
@@ -166,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/admin/xp-events': typeof AdminXpEventsRoute
   '/profile/edit': typeof ProfileEditRoute
   '/admin/': typeof AdminIndexRoute
+  '/profile/': typeof ProfileIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -173,7 +180,6 @@ export interface FileRoutesByTo {
   '/leaderboard': typeof LeaderboardRoute
   '/login': typeof LoginRoute
   '/play': typeof PlayRoute
-  '/profile': typeof ProfileRouteWithChildren
   '/upload': typeof UploadRoute
   '/admin/ads': typeof AdminAdsRoute
   '/admin/daily-challenges': typeof AdminDailyChallengesRoute
@@ -189,6 +195,7 @@ export interface FileRoutesByTo {
   '/admin/xp-events': typeof AdminXpEventsRoute
   '/profile/edit': typeof ProfileEditRoute
   '/admin': typeof AdminIndexRoute
+  '/profile': typeof ProfileIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -214,6 +221,7 @@ export interface FileRoutesById {
   '/admin/xp-events': typeof AdminXpEventsRoute
   '/profile/edit': typeof ProfileEditRoute
   '/admin/': typeof AdminIndexRoute
+  '/profile/': typeof ProfileIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -240,6 +248,7 @@ export interface FileRouteTypes {
     | '/admin/xp-events'
     | '/profile/edit'
     | '/admin/'
+    | '/profile/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -247,7 +256,6 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/login'
     | '/play'
-    | '/profile'
     | '/upload'
     | '/admin/ads'
     | '/admin/daily-challenges'
@@ -263,6 +271,7 @@ export interface FileRouteTypes {
     | '/admin/xp-events'
     | '/profile/edit'
     | '/admin'
+    | '/profile'
   id:
     | '__root__'
     | '/'
@@ -287,6 +296,7 @@ export interface FileRouteTypes {
     | '/admin/xp-events'
     | '/profile/edit'
     | '/admin/'
+    | '/profile/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -357,6 +367,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/profile/': {
+      id: '/profile/'
+      path: '/'
+      fullPath: '/profile/'
+      preLoaderRoute: typeof ProfileIndexRouteImport
+      parentRoute: typeof ProfileRoute
     }
     '/admin/': {
       id: '/admin/'
@@ -495,10 +512,12 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface ProfileRouteChildren {
   ProfileEditRoute: typeof ProfileEditRoute
+  ProfileIndexRoute: typeof ProfileIndexRoute
 }
 
 const ProfileRouteChildren: ProfileRouteChildren = {
   ProfileEditRoute: ProfileEditRoute,
+  ProfileIndexRoute: ProfileIndexRoute,
 }
 
 const ProfileRouteWithChildren =
