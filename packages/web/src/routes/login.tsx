@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { Mail, ChevronLeft } from "lucide-react";
 import { LanguageToggle } from "../components/LanguageToggle";
 import { Button } from "../components/ui";
 import { useAuth } from "../lib/auth";
@@ -11,11 +12,19 @@ export const Route = createFileRoute("/login")({
 
 const SOCIAL_PROVIDERS = ["google", "facebook", "apple", "tiktok"] as const;
 
+const PROVIDER_META: Record<(typeof SOCIAL_PROVIDERS)[number], { label: string; bg: string }> = {
+  google: { label: "Google", bg: "bg-white text-slate-700 border-border" },
+  facebook: { label: "Facebook", bg: "bg-[#1877F2] text-white border-transparent" },
+  apple: { label: "Apple", bg: "bg-slate-900 text-white border-transparent" },
+  tiktok: { label: "TikTok", bg: "bg-slate-900 text-white border-transparent" },
+};
+
 function LoginComponent() {
   const { loginWithEmail, registerWithEmail, loginWithSocial } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [mode, setMode] = useState<"login" | "register">("login");
+  const [showEmailForm, setShowEmailForm] = useState(false);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,7 +44,7 @@ function LoginComponent() {
       }
       navigate({ to: "/play" });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Authentication failed");
+      setError(err instanceof Error ? err.message : t("login.auth_failed"));
     } finally {
       setLoading(false);
     }
@@ -49,7 +58,7 @@ function LoginComponent() {
       await loginWithSocial(provider, `mock:${provider}@guesseat.test`, "web-browser");
       navigate({ to: "/play" });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Social login failed");
+      setError(err instanceof Error ? err.message : t("login.social_failed"));
     } finally {
       setLoading(false);
     }
@@ -74,76 +83,110 @@ function LoginComponent() {
           </div>
         )}
 
-        <div className="mb-4 grid grid-cols-2 rounded-xl border border-border bg-surface p-1">
-          <button
-            type="button"
-            onClick={() => setMode("login")}
-            className={`rounded-lg px-3 py-2 text-sm font-bold ${mode === "login" ? "bg-chili text-white" : "text-slate-600"}`}
-          >
-            Login
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode("register")}
-            className={`rounded-lg px-3 py-2 text-sm font-bold ${mode === "register" ? "bg-chili text-white" : "text-slate-600"}`}
-          >
-            Sign up
-          </button>
-        </div>
+        {!showEmailForm ? (
+          <>
+            <div className="space-y-2.5">
+              {SOCIAL_PROVIDERS.map((provider) => {
+                const meta = PROVIDER_META[provider];
+                return (
+                  <button
+                    key={provider}
+                    type="button"
+                    disabled={loading}
+                    onClick={() => handleSocial(provider)}
+                    className={`flex w-full items-center justify-center gap-2.5 rounded-xl border px-4 py-3 text-sm font-bold transition-opacity hover:opacity-90 disabled:opacity-60 ${meta.bg}`}
+                  >
+                    {meta.label}
+                  </button>
+                );
+              })}
+            </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {mode === "register" && (
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Username"
-              className="w-full rounded-xl bg-surface border border-border px-4 py-3 text-cream placeholder-muted-dim focus:border-chili focus:outline-none focus:ring-2 focus:ring-chili/20 transition-all"
-            />
-          )}
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            className="w-full rounded-xl bg-surface border border-border px-4 py-3 text-cream placeholder-muted-dim focus:border-chili focus:outline-none focus:ring-2 focus:ring-chili/20 transition-all"
-            required
-          />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            className="w-full rounded-xl bg-surface border border-border px-4 py-3 text-cream placeholder-muted-dim focus:border-chili focus:outline-none focus:ring-2 focus:ring-chili/20 transition-all"
-            required
-          />
-          <Button type="submit" loading={loading}>
-            {mode === "login" ? "Login" : "Create account"}
-          </Button>
-        </form>
+            <div className="my-5 flex items-center gap-3 text-xs font-bold text-slate-500">
+              <span className="h-px flex-1 bg-border" />
+              {t("login.or_divider")}
+              <span className="h-px flex-1 bg-border" />
+            </div>
 
-        <div className="my-5 flex items-center gap-3 text-xs font-bold text-slate-500">
-          <span className="h-px flex-1 bg-border" />
-          or continue with
-          <span className="h-px flex-1 bg-border" />
-        </div>
-
-        <div className="grid grid-cols-2 gap-2">
-          {SOCIAL_PROVIDERS.map((provider) => (
             <button
-              key={provider}
               type="button"
               disabled={loading}
-              onClick={() => handleSocial(provider)}
-              className="rounded-xl border border-border bg-surface px-4 py-3 text-sm font-semibold capitalize text-cream hover:border-chili transition-colors disabled:opacity-60"
+              onClick={() => {
+                setError("");
+                setShowEmailForm(true);
+              }}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-surface px-4 py-3 text-sm font-bold text-cream transition-colors hover:border-chili disabled:opacity-60"
             >
-              {provider}
+              <Mail size={18} />
+              {t("login.continue_with_email")}
             </button>
-          ))}
-        </div>
+          </>
+        ) : (
+          <>
+            <div className="mb-4 grid grid-cols-2 rounded-xl border border-border bg-surface p-1">
+              <button
+                type="button"
+                onClick={() => setMode("login")}
+                className={`rounded-lg px-3 py-2 text-sm font-bold ${mode === "login" ? "bg-chili text-white" : "text-slate-600"}`}
+              >
+                {t("login.tab_login")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setMode("register")}
+                className={`rounded-lg px-3 py-2 text-sm font-bold ${mode === "register" ? "bg-chili text-white" : "text-slate-600"}`}
+              >
+                {t("login.tab_signup")}
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {mode === "register" && (
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder={t("login.username")}
+                  className="w-full rounded-xl bg-surface border border-border px-4 py-3 text-cream placeholder-muted-dim focus:border-chili focus:outline-none focus:ring-2 focus:ring-chili/20 transition-all"
+                />
+              )}
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder={t("login.email")}
+                className="w-full rounded-xl bg-surface border border-border px-4 py-3 text-cream placeholder-muted-dim focus:border-chili focus:outline-none focus:ring-2 focus:ring-chili/20 transition-all"
+                required
+              />
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder={t("login.password")}
+                className="w-full rounded-xl bg-surface border border-border px-4 py-3 text-cream placeholder-muted-dim focus:border-chili focus:outline-none focus:ring-2 focus:ring-chili/20 transition-all"
+                required
+              />
+              <Button type="submit" loading={loading}>
+                {mode === "login" ? t("login.submit_login") : t("login.submit_register")}
+              </Button>
+            </form>
+
+            <button
+              type="button"
+              onClick={() => {
+                setError("");
+                setShowEmailForm(false);
+              }}
+              className="mt-4 flex items-center justify-center gap-1 text-sm font-bold text-slate-500 hover:text-cream transition-colors"
+            >
+              <ChevronLeft size={16} />
+              {t("login.back_to_social")}
+            </button>
+          </>
+        )}
 
         <p className="mt-4 text-center text-xs font-medium text-slate-500">
-          Phone verification is only required when you submit restaurants or photos.
+          {t("login.phone_note")}
         </p>
       </div>
     </div>
