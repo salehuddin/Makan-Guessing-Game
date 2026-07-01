@@ -1,6 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Mail, ChevronLeft } from "lucide-react";
 import { LanguageToggle } from "../components/LanguageToggle";
 import { Button } from "../components/ui";
 import { useAuth } from "../lib/auth";
@@ -24,7 +23,6 @@ function LoginComponent() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [mode, setMode] = useState<"login" | "register">("login");
-  const [showEmailForm, setShowEmailForm] = useState(false);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -83,107 +81,76 @@ function LoginComponent() {
           </div>
         )}
 
-        {!showEmailForm ? (
-          <>
-            <div className="space-y-2.5">
-              {SOCIAL_PROVIDERS.map((provider) => {
-                const meta = PROVIDER_META[provider];
-                return (
-                  <button
-                    key={provider}
-                    type="button"
-                    disabled={loading}
-                    onClick={() => handleSocial(provider)}
-                    className={`flex w-full items-center justify-center gap-2.5 rounded-xl border px-4 py-3 text-sm font-bold transition-opacity hover:opacity-90 disabled:opacity-60 ${meta.bg}`}
-                  >
-                    {meta.label}
-                  </button>
-                );
-              })}
-            </div>
+        <div className="mb-4 grid grid-cols-2 rounded-xl border border-border bg-surface p-1">
+          <button
+            type="button"
+            onClick={() => setMode("login")}
+            className={`rounded-lg px-3 py-2 text-sm font-bold ${mode === "login" ? "bg-chili text-white" : "text-slate-600"}`}
+          >
+            {t("login.tab_login")}
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode("register")}
+            className={`rounded-lg px-3 py-2 text-sm font-bold ${mode === "register" ? "bg-chili text-white" : "text-slate-600"}`}
+          >
+            {t("login.tab_signup")}
+          </button>
+        </div>
 
-            <div className="my-5 flex items-center gap-3 text-xs font-bold text-slate-500">
-              <span className="h-px flex-1 bg-border" />
-              {t("login.or_divider")}
-              <span className="h-px flex-1 bg-border" />
-            </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {mode === "register" && (
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder={t("login.username")}
+              className="w-full rounded-xl bg-surface border border-border px-4 py-3 text-cream placeholder-muted-dim focus:border-chili focus:outline-none focus:ring-2 focus:ring-chili/20 transition-all"
+            />
+          )}
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder={t("login.email")}
+            className="w-full rounded-xl bg-surface border border-border px-4 py-3 text-cream placeholder-muted-dim focus:border-chili focus:outline-none focus:ring-2 focus:ring-chili/20 transition-all"
+            required
+          />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder={t("login.password")}
+            className="w-full rounded-xl bg-surface border border-border px-4 py-3 text-cream placeholder-muted-dim focus:border-chili focus:outline-none focus:ring-2 focus:ring-chili/20 transition-all"
+            required
+          />
+          <Button type="submit" loading={loading}>
+            {mode === "login" ? t("login.submit_login") : t("login.submit_register")}
+          </Button>
+        </form>
 
-            <button
-              type="button"
-              disabled={loading}
-              onClick={() => {
-                setError("");
-                setShowEmailForm(true);
-              }}
-              className="flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-surface px-4 py-3 text-sm font-bold text-cream transition-colors hover:border-chili disabled:opacity-60"
-            >
-              <Mail size={18} />
-              {t("login.continue_with_email")}
-            </button>
-          </>
-        ) : (
-          <>
-            <div className="mb-4 grid grid-cols-2 rounded-xl border border-border bg-surface p-1">
+        <div className="my-5 flex items-center gap-3 text-xs font-bold text-slate-500">
+          <span className="h-px flex-1 bg-border" />
+          {t("login.or_divider")}
+          <span className="h-px flex-1 bg-border" />
+        </div>
+
+        <div className="space-y-2.5">
+          {SOCIAL_PROVIDERS.map((provider) => {
+            const meta = PROVIDER_META[provider];
+            return (
               <button
+                key={provider}
                 type="button"
-                onClick={() => setMode("login")}
-                className={`rounded-lg px-3 py-2 text-sm font-bold ${mode === "login" ? "bg-chili text-white" : "text-slate-600"}`}
+                disabled={loading}
+                onClick={() => handleSocial(provider)}
+                className={`flex w-full items-center justify-center gap-2.5 rounded-xl border px-4 py-3 text-sm font-bold transition-opacity hover:opacity-90 disabled:opacity-60 ${meta.bg}`}
               >
-                {t("login.tab_login")}
+                {meta.label}
               </button>
-              <button
-                type="button"
-                onClick={() => setMode("register")}
-                className={`rounded-lg px-3 py-2 text-sm font-bold ${mode === "register" ? "bg-chili text-white" : "text-slate-600"}`}
-              >
-                {t("login.tab_signup")}
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {mode === "register" && (
-                <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder={t("login.username")}
-                  className="w-full rounded-xl bg-surface border border-border px-4 py-3 text-cream placeholder-muted-dim focus:border-chili focus:outline-none focus:ring-2 focus:ring-chili/20 transition-all"
-                />
-              )}
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t("login.email")}
-                className="w-full rounded-xl bg-surface border border-border px-4 py-3 text-cream placeholder-muted-dim focus:border-chili focus:outline-none focus:ring-2 focus:ring-chili/20 transition-all"
-                required
-              />
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder={t("login.password")}
-                className="w-full rounded-xl bg-surface border border-border px-4 py-3 text-cream placeholder-muted-dim focus:border-chili focus:outline-none focus:ring-2 focus:ring-chili/20 transition-all"
-                required
-              />
-              <Button type="submit" loading={loading}>
-                {mode === "login" ? t("login.submit_login") : t("login.submit_register")}
-              </Button>
-            </form>
-
-            <button
-              type="button"
-              onClick={() => {
-                setError("");
-                setShowEmailForm(false);
-              }}
-              className="mt-4 flex items-center justify-center gap-1 text-sm font-bold text-slate-500 hover:text-cream transition-colors"
-            >
-              <ChevronLeft size={16} />
-              {t("login.back_to_social")}
-            </button>
-          </>
-        )}
+            );
+          })}
+        </div>
 
         <p className="mt-4 text-center text-xs font-medium text-slate-500">
           {t("login.phone_note")}
