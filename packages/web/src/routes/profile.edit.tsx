@@ -708,7 +708,7 @@ function DangerZoneSection({
         <button
           type="button"
           onClick={() => logout()}
-          className="flex w-full items-center justify-center gap-2 rounded-[1.5rem] border border-slate-200 bg-white px-5 py-4 text-base font-bold text-[#061835] transition active:scale-95"
+          className="flex w-full items-center justify-center gap-2 rounded-[1.5rem] border border-slate-300 bg-slate-50 px-5 py-4 text-base font-bold text-slate-700 transition hover:bg-slate-100 active:scale-95"
         >
           <LogOut size={20} />
           Sign Out
