@@ -21,6 +21,7 @@ import {
   Bell,
 } from "lucide-react";
 import { useAuth } from "../lib/auth";
+import { useTranslation } from "../lib/i18n";
 
 export const Route = createFileRoute("/profile/edit")({
   component: ProfileEditComponent,
@@ -44,6 +45,7 @@ function ProfileEditComponent() {
     logout,
   } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -60,13 +62,13 @@ function ProfileEditComponent() {
           type="button"
           onClick={() => navigate({ to: "/profile" })}
           className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-[#061835] shadow-sm ring-1 ring-slate-200"
-          aria-label="Back to profile"
+          aria-label={t("profile_edit.back_to_profile")}
         >
           <ArrowLeft size={22} />
         </button>
         <div className="text-center">
-          <h2 className="text-xl font-bold text-[#061835]">Settings</h2>
-          <p className="text-sm font-medium text-[#64748b]">Manage your account</p>
+          <h2 className="text-xl font-bold text-[#061835]">{t("profile_edit.settings")}</h2>
+          <p className="text-sm font-medium text-[#64748b]">{t("profile_edit.manage_account")}</p>
         </div>
         <div className="h-11 w-11" />
       </div>
@@ -153,6 +155,7 @@ function ProfileSection({
   const [uploadingCover, setUploadingCover] = useState(false);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     setUsername(user.username);
@@ -174,9 +177,9 @@ function ProfileSection({
         avatar_url: avatarUrl || undefined,
         cover_url: coverUrl || undefined,
       });
-      setSuccess("Profile updated.");
+      setSuccess(t("profile_edit.profile_updated"));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to update profile");
+      setError(err instanceof Error ? err.message : t("profile_edit.unable_update_profile"));
     } finally {
       setSaving(false);
     }
@@ -189,16 +192,16 @@ function ProfileSection({
     setUploading(true);
     try {
       await uploadImage(type, file);
-      setSuccess(`${type === "avatar" ? "Avatar" : "Cover"} updated.`);
+      setSuccess(type === "avatar" ? t("profile_edit.avatar_updated") : t("profile_edit.cover_updated"));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload failed");
+      setError(err instanceof Error ? err.message : t("profile_edit.upload_failed"));
     } finally {
       setUploading(false);
     }
   }
 
   return (
-    <SectionCard title="Profile" icon={<User size={20} />} defaultOpen>
+    <SectionCard title={t("profile_edit.section_profile")} icon={<User size={20} />} defaultOpen>
       {error && (
         <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-500">
           {error}
@@ -269,7 +272,7 @@ function ProfileSection({
       </div>
 
       <div className="space-y-4">
-        <Field label="Username">
+        <Field label={t("profile_edit.username")}>
           <input
             value={username}
             onChange={(e) => setUsername(e.target.value)}
@@ -280,7 +283,7 @@ function ProfileSection({
           />
         </Field>
 
-        <Field label="Location">
+        <Field label={t("profile_edit.location")}>
           <input
             value={district}
             onChange={(e) => setDistrict(e.target.value)}
@@ -290,7 +293,7 @@ function ProfileSection({
           />
         </Field>
 
-        <Field label="Bio">
+        <Field label={t("profile_edit.bio")}>
           <textarea
             value={profileBio}
             onChange={(e) => setProfileBio(e.target.value)}
@@ -303,7 +306,7 @@ function ProfileSection({
           </p>
         </Field>
 
-        <Field label="Avatar image URL">
+        <Field label={t("profile_edit.avatar_url")}>
           <input
             value={avatarUrl}
             onChange={(e) => setAvatarUrl(e.target.value)}
@@ -313,7 +316,7 @@ function ProfileSection({
           />
         </Field>
 
-        <Field label="Cover image URL">
+        <Field label={t("profile_edit.cover_url")}>
           <input
             value={coverUrl}
             onChange={(e) => setCoverUrl(e.target.value)}
@@ -330,7 +333,7 @@ function ProfileSection({
           className="flex w-full items-center justify-center gap-2 rounded-[1.5rem] bg-[#ff5360] px-5 py-4 text-base font-bold text-white shadow-[0_12px_24px_rgba(255,83,96,0.25)] transition active:scale-95 disabled:opacity-60"
         >
           {saving ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} />}
-          {saving ? "Saving..." : "Save Profile"}
+          {saving ? t("common.saving") : t("profile_edit.save_profile")}
         </button>
       </div>
     </SectionCard>
@@ -354,6 +357,8 @@ function AccountSection({
     setEmail(user.email ?? "");
   }, [user]);
 
+  const { t } = useTranslation();
+
   async function handleSave() {
     setError("");
     setSuccess("");
@@ -361,16 +366,16 @@ function AccountSection({
     try {
       await updateEmail(email, password);
       setPassword("");
-      setSuccess("Email updated.");
+      setSuccess(t("profile_edit.email_updated"));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to update email");
+      setError(err instanceof Error ? err.message : t("profile_edit.unable_update_email"));
     } finally {
       setSaving(false);
     }
   }
 
   return (
-    <SectionCard title="Account" icon={<Mail size={20} />}>
+    <SectionCard title={t("profile_edit.section_account")} icon={<Mail size={20} />}>
       {error && (
         <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-500">
           {error}
@@ -383,7 +388,7 @@ function AccountSection({
       )}
 
       <div className="space-y-4">
-        <Field label="Email address">
+        <Field label={t("profile_edit.email_address")}>
           <div className="relative">
             <input
               value={email}
@@ -394,17 +399,17 @@ function AccountSection({
             />
             {user.email_verified_at ? (
               <span className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-emerald-50 px-2.5 py-1 text-[0.65rem] font-semibold uppercase text-emerald-600">
-                Verified
+                {t("profile_edit.verified")}
               </span>
             ) : (
               <span className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-amber-50 px-2.5 py-1 text-[0.65rem] font-semibold uppercase text-amber-600">
-                Unverified
+                {t("profile_edit.unverified")}
               </span>
             )}
           </div>
         </Field>
 
-        <Field label="Confirm with password">
+        <Field label={t("profile_edit.confirm_password")}>
           <input
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -418,10 +423,10 @@ function AccountSection({
           <Phone size={18} className="text-[#52627a]" />
           <div className="flex-1">
             <p className="text-sm font-semibold text-[#061835]">
-              {user.phone ?? "No phone linked"}
+              {user.phone ?? t("profile_edit.no_phone")}
             </p>
             <p className="text-xs text-[#64748b]">
-              {user.phone_verified_at ? "Verified" : "Not verified"}
+              {user.phone_verified_at ? t("profile_edit.verified") : t("profile_edit.not_verified")}
             </p>
           </div>
         </div>
@@ -433,7 +438,7 @@ function AccountSection({
           className="flex w-full items-center justify-center gap-2 rounded-[1.5rem] bg-[#ff5360] px-5 py-4 text-base font-bold text-white shadow-[0_12px_24px_rgba(255,83,96,0.25)] transition active:scale-95 disabled:opacity-60"
         >
           {saving ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} />}
-          {saving ? "Saving..." : "Update Email"}
+          {saving ? t("common.saving") : t("profile_edit.update_email")}
         </button>
       </div>
     </SectionCard>
@@ -454,11 +459,13 @@ function SecuritySection({
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  const { t } = useTranslation();
+
   async function handleSave() {
     setError("");
     setSuccess("");
     if (newPassword !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError(t("profile_edit.passwords_not_match"));
       return;
     }
     setSaving(true);
@@ -467,16 +474,16 @@ function SecuritySection({
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-      setSuccess("Password changed.");
+      setSuccess(t("profile_edit.password_changed"));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to change password");
+      setError(err instanceof Error ? err.message : t("profile_edit.unable_change_password"));
     } finally {
       setSaving(false);
     }
   }
 
   return (
-    <SectionCard title="Security" icon={<Shield size={20} />}>
+    <SectionCard title={t("profile_edit.section_security")} icon={<Shield size={20} />}>
       {error && (
         <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-500">
           {error}
@@ -489,7 +496,7 @@ function SecuritySection({
       )}
 
       <div className="space-y-4">
-        <Field label="Current password">
+        <Field label={t("profile_edit.current_password")}>
           <div className="relative">
             <input
               value={currentPassword}
@@ -508,7 +515,7 @@ function SecuritySection({
           </div>
         </Field>
 
-        <Field label="New password">
+        <Field label={t("profile_edit.new_password")}>
           <div className="relative">
             <input
               value={newPassword}
@@ -528,7 +535,7 @@ function SecuritySection({
           </div>
         </Field>
 
-        <Field label="Confirm new password">
+        <Field label={t("profile_edit.confirm_new_password")}>
           <input
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
@@ -546,7 +553,7 @@ function SecuritySection({
           className="flex w-full items-center justify-center gap-2 rounded-[1.5rem] bg-[#061835] px-5 py-4 text-base font-bold text-white transition active:scale-95 disabled:opacity-60"
         >
           {saving ? <Loader2 size={20} className="animate-spin" /> : <Key size={20} />}
-          {saving ? "Updating..." : "Change Password"}
+          {saving ? t("common.updating") : t("profile_edit.change_password")}
         </button>
       </div>
     </SectionCard>
@@ -570,6 +577,7 @@ function PreferencesSection({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const { t } = useTranslation();
 
   useEffect(() => {
     setLanguage(user.language ?? "en");
@@ -587,16 +595,16 @@ function PreferencesSection({
         notifications_enabled: notificationsEnabled,
         profile_visibility: profileVisibility,
       });
-      setSuccess("Preferences saved.");
+      setSuccess(t("profile_edit.preferences_saved"));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to save preferences");
+      setError(err instanceof Error ? err.message : t("profile_edit.unable_save_preferences"));
     } finally {
       setSaving(false);
     }
   }
 
   return (
-    <SectionCard title="Preferences" icon={<Globe size={20} />}>
+    <SectionCard title={t("profile_edit.section_preferences")} icon={<Globe size={20} />}>
       {error && (
         <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-500">
           {error}
@@ -609,7 +617,7 @@ function PreferencesSection({
       )}
 
       <div className="space-y-4">
-        <Field label="Language">
+        <Field label={t("profile_edit.language")}>
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
@@ -625,9 +633,9 @@ function PreferencesSection({
           <div className="flex items-center gap-3">
             <Bell size={18} className="text-[#52627a]" />
             <div>
-              <p className="text-sm font-semibold text-[#061835]">Notifications</p>
+              <p className="text-sm font-semibold text-[#061835]">{t("profile_edit.notifications")}</p>
               <p className="text-xs text-[#64748b]">
-                Receive game and activity alerts
+                {t("profile_edit.notifications_desc")}
               </p>
             </div>
           </div>
@@ -648,14 +656,14 @@ function PreferencesSection({
           </button>
         </div>
 
-        <Field label="Profile visibility">
+        <Field label={t("profile_edit.profile_visibility")}>
           <select
             value={profileVisibility}
             onChange={(e) => setProfileVisibility(e.target.value)}
             className={inputClass()}
           >
-            <option value="public">Public — visible to everyone</option>
-            <option value="private">Private — only you</option>
+            <option value="public">{t("profile_edit.visibility_public")}</option>
+            <option value="private">{t("profile_edit.visibility_private")}</option>
           </select>
         </Field>
 
@@ -666,7 +674,7 @@ function PreferencesSection({
           className="flex w-full items-center justify-center gap-2 rounded-[1.5rem] bg-[#ff5360] px-5 py-4 text-base font-bold text-white shadow-[0_12px_24px_rgba(255,83,96,0.25)] transition active:scale-95 disabled:opacity-60"
         >
           {saving ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} />}
-          {saving ? "Saving..." : "Save Preferences"}
+          {saving ? t("common.saving") : t("profile_edit.save_preferences")}
         </button>
       </div>
     </SectionCard>
@@ -684,6 +692,7 @@ function DangerZoneSection({
   const [password, setPassword] = useState("");
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
+  const { t } = useTranslation();
 
   async function handleDelete() {
     setError("");
@@ -691,13 +700,13 @@ function DangerZoneSection({
     try {
       await deleteAccount(password);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to delete account");
+      setError(err instanceof Error ? err.message : t("profile_edit.unable_delete_account"));
       setDeleting(false);
     }
   }
 
   return (
-    <SectionCard title="Danger Zone" icon={<Trash2 size={20} />}>
+    <SectionCard title={t("profile_edit.section_danger")} icon={<Trash2 size={20} />}>
       {error && (
         <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-500">
           {error}
@@ -711,7 +720,7 @@ function DangerZoneSection({
           className="flex w-full items-center justify-center gap-2 rounded-[1.5rem] border border-slate-300 bg-slate-50 px-5 py-4 text-base font-bold text-slate-700 transition hover:bg-slate-100 active:scale-95"
         >
           <LogOut size={20} />
-          Sign Out
+          {t("profile_edit.sign_out")}
         </button>
 
         {!showConfirm ? (
@@ -721,14 +730,14 @@ function DangerZoneSection({
             className="flex w-full items-center justify-center gap-2 rounded-[1.5rem] border border-red-200 bg-red-50 px-5 py-4 text-base font-bold text-red-600 transition active:scale-95"
           >
             <Trash2 size={20} />
-            Delete Account
+            {t("profile_edit.delete_account")}
           </button>
         ) : (
           <div className="rounded-2xl border border-red-200 bg-red-50 p-4">
             <p className="mb-3 text-sm font-semibold text-red-600">
-              This action is permanent. All your data will be lost.
+              {t("profile_edit.delete_warning")}
             </p>
-            <Field label="Confirm with password">
+            <Field label={t("profile_edit.confirm_password")}>
               <input
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -747,7 +756,7 @@ function DangerZoneSection({
                 }}
                 className="flex-1 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-[#061835]"
               >
-                Cancel
+                {t("common.cancel")}
               </button>
               <button
                 type="button"
@@ -756,7 +765,7 @@ function DangerZoneSection({
                 className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-red-600 px-4 py-3 text-sm font-bold text-white disabled:opacity-60"
               >
                 {deleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
-                {deleting ? "Deleting..." : "Confirm Delete"}
+                {deleting ? t("profile_edit.deleting") : t("profile_edit.confirm_delete")}
               </button>
             </div>
           </div>

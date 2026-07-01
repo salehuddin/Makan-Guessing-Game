@@ -1,16 +1,18 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { Calendar, Home, PlusSquare, Trophy, User } from "lucide-react";
+import { useTranslation } from "../lib/i18n";
 
 const items = [
-  { to: "/", icon: Home, label: "Home" },
-  { to: "/daily", icon: Calendar, label: "Daily" },
-  { to: "/play", icon: Trophy, label: "Classic" },
-  { to: "/upload", icon: PlusSquare, label: "Submit" },
-  { to: "/profile", icon: User, label: "Me" },
+  { to: "/", icon: Home, key: "nav.home" as const },
+  { to: "/daily", icon: Calendar, key: "nav.daily" as const },
+  { to: "/play", icon: Trophy, key: "nav.classic" as const },
+  { to: "/upload", icon: PlusSquare, key: "nav.submit" as const },
+  { to: "/profile", icon: User, key: "nav.me" as const },
 ];
 
 export function BottomNav() {
   const location = useLocation();
+  const { t } = useTranslation();
 
   return (
     <div className="fixed bottom-5 left-1/2 z-50 w-[90%] max-w-lg -translate-x-1/2">
@@ -28,7 +30,7 @@ export function BottomNav() {
             >
               <Icon size={active ? 23 : 21} />
               <span className={`text-[11px] font-bold ${active ? "block" : "hidden"}`}>
-                {item.label}
+                {t(item.key)}
               </span>
             </Link>
           );

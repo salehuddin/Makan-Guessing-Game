@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { Award, ChevronRight, Flame, History, Target, Trophy, Utensils, Zap } from "lucide-react";
 import { useAuth } from "../lib/auth";
+import { useTranslation } from "../lib/i18n";
 import { AdBanner } from "../components/AdBanner";
 
 export const Route = createFileRoute("/")({
@@ -11,6 +12,7 @@ export const Route = createFileRoute("/")({
 function HomeComponent() {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -27,8 +29,8 @@ function HomeComponent() {
   return (
     <main className="flex-1 px-6 pb-32 pt-24">
       <section className="mb-8">
-        <h2 className="text-xl font-black text-cream">Welcome back, {user.username}!</h2>
-        <p className="mt-1 text-sm font-medium text-slate-600">Ready to test your palate today?</p>
+        <h2 className="text-xl font-black text-cream">{t("home.welcome_back", { username: user.username })}</h2>
+        <p className="mt-1 text-sm font-medium text-slate-600">{t("home.ready")}</p>
       </section>
 
       <section className="mb-8">
@@ -41,16 +43,16 @@ function HomeComponent() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
           <div className="absolute left-4 top-4 flex items-center gap-1.5 rounded-2xl border border-white/20 bg-white/10 px-3 py-1.5 backdrop-blur-md">
             <Flame size={14} className="text-orange-400" />
-            <span className="text-xs font-bold uppercase tracking-wide text-white">Daily Challenge</span>
+            <span className="text-xs font-bold uppercase tracking-wide text-white">{t("home.daily_challenge")}</span>
           </div>
           <div className="absolute inset-x-0 bottom-0 flex flex-col gap-4 p-6">
             <div>
-              <h3 className="mb-1 text-2xl font-bold text-white">Authentic Malaysian</h3>
-              <p className="text-sm font-medium text-white/85">Can you identify these local hidden gems?</p>
+              <h3 className="mb-1 text-2xl font-bold text-white">{t("home.authentic_malaysian")}</h3>
+              <p className="text-sm font-medium text-white/85">{t("home.identify_gems")}</p>
             </div>
             <div>
               <div className="mb-2 flex items-end justify-between">
-                <span className="text-sm font-medium text-white/90">Current Progress</span>
+                <span className="text-sm font-medium text-white/90">{t("home.current_progress")}</span>
                 <span className="text-lg font-bold text-white">0/5</span>
               </div>
               <div className="h-2.5 w-full overflow-hidden rounded-full bg-white/20 backdrop-blur-sm">
@@ -61,7 +63,7 @@ function HomeComponent() {
               onClick={() => navigate({ to: "/daily" })}
               className="flex w-full items-center justify-center gap-2 rounded-2xl bg-chili py-4 font-bold text-white shadow-lg shadow-chili/20 active:scale-95"
             >
-              <span>Play Now</span>
+              <span>{t("home.play_now")}</span>
               <ChevronRight size={18} />
             </button>
           </div>
@@ -70,8 +72,8 @@ function HomeComponent() {
 
       <section className="mb-8">
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-lg font-bold text-cream">Modes</h3>
-          <button className="text-sm font-bold text-chili">View All</button>
+          <h3 className="text-lg font-bold text-cream">{t("home.modes")}</h3>
+          <button className="text-sm font-bold text-chili">{t("home.view_all")}</button>
         </div>
         <button
           onClick={() => navigate({ to: "/play" })}
@@ -81,8 +83,8 @@ function HomeComponent() {
             <Zap size={28} fill="currentColor" />
           </div>
           <div className="flex-1">
-            <h4 className="text-lg font-bold text-cream">Classic Mode</h4>
-            <p className="text-sm font-medium text-slate-600">Speed-guess random restaurants</p>
+            <h4 className="text-lg font-bold text-cream">{t("home.classic_mode")}</h4>
+            <p className="text-sm font-medium text-slate-600">{t("home.speed_guess")}</p>
           </div>
           <div className="rounded-full bg-gray-50 p-2 text-gray-400">
             <ChevronRight size={20} />
@@ -91,16 +93,16 @@ function HomeComponent() {
       </section>
 
       <section className="mb-8">
-        <h3 className="mb-4 text-lg font-bold text-cream">Statistics</h3>
+        <h3 className="mb-4 text-lg font-bold text-cream">{t("home.statistics")}</h3>
         <div className="flex gap-4">
-          <StatCard label="Total Guesses" value={String(guessesPlayed)} icon={<Target size={16} />} color="bg-blue-500" />
-          <StatCard label="Accuracy" value={`${accuracy}%`} icon={<Trophy size={16} />} color="bg-amber-500" />
+          <StatCard label={t("home.total_guesses")} value={String(guessesPlayed)} icon={<Target size={16} />} color="bg-blue-500" />
+          <StatCard label={t("home.accuracy")} value={`${accuracy}%`} icon={<Trophy size={16} />} color="bg-amber-500" />
         </div>
       </section>
 
       <section className="mb-4 grid grid-cols-2 gap-4">
-        <MiniCard icon={<History className="text-indigo-500" />} label="Past Guesses" value={String(guessesPlayed)} />
-        <MiniCard icon={<Award className="text-rose-500" />} label="XP Total" value={String(user.xp_total)} />
+        <MiniCard icon={<History className="text-indigo-500" />} label={t("home.past_guesses")} value={String(guessesPlayed)} />
+        <MiniCard icon={<Award className="text-rose-500" />} label={t("home.xp_total")} value={String(user.xp_total)} />
       </section>
 
       <AdBanner placement="home_banner" />
@@ -110,10 +112,10 @@ function HomeComponent() {
           <div className="relative z-10">
             <h4 className="mb-2 flex items-center gap-2 text-lg font-bold">
               <Utensils size={18} />
-              <span>Foodie Tip</span>
+              <span>{t("home.foodie_tip")}</span>
             </h4>
             <p className="text-sm leading-relaxed text-indigo-100">
-              Nasi lemak is often called Malaysia's national dish. Try identifying the variations from different states!
+              {t("home.foodie_tip_text")}
             </p>
           </div>
           <div className="absolute -bottom-10 -right-10 h-32 w-32 rounded-full bg-white/10 blur-2xl" />

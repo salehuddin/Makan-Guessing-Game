@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { CheckCircle2, Clock3, ImageIcon, MapPin, Settings, Trophy, XCircle } from "lucide-react";
 import { api } from "../../lib/api";
 import { useAuth } from "../../lib/auth";
+import { useTranslation } from "../../lib/i18n";
 import { CATEGORY_EMOJIS, type SubmittedPhoto } from "../../lib/types";
 
 export const Route = createFileRoute("/profile/")({
@@ -15,6 +16,7 @@ const defaultAvatarUrl = "https://images.unsplash.com/photo-1499996860823-5214fc
 function ProfileComponent() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<"activity" | "photos" | "achievements">("activity");
   const [photos, setPhotos] = useState<SubmittedPhoto[]>([]);
   const [loadingPhotos, setLoadingPhotos] = useState(true);
@@ -56,7 +58,7 @@ function ProfileComponent() {
           type="button"
           onClick={() => navigate({ to: "/profile/edit" })}
           className="absolute right-5 top-7 flex h-12 w-12 items-center justify-center rounded-full border-[3px] border-white bg-[#6f625d] text-white shadow-lg transition-transform active:scale-95"
-          aria-label="Edit profile"
+          aria-label={t("profile.edit_profile")}
         >
           <Settings size={23} />
         </button>
@@ -75,10 +77,10 @@ function ProfileComponent() {
         <h2 className="text-[1.65rem] font-black leading-tight text-[#061835]">{user.username}</h2>
         <div className="mt-2 flex items-center justify-center gap-1.5 text-sm font-bold text-[#4f6078]">
           <MapPin size={17} className="text-[#ff5360]" />
-          <span>{user.district || "Kuala Lumpur, MY"}</span>
+          <span>{user.district || t("profile.default_location")}</span>
         </div>
         <p className="mt-3 text-[0.95rem] font-medium leading-relaxed text-[#26364d]">
-          {user.profile_bio || "Obsessed with finding hidden gems 🍜"}
+          {user.profile_bio || `${t("profile.default_bio")} 🍜`}
         </p>
       </section>
 
@@ -88,14 +90,14 @@ function ProfileComponent() {
             <Trophy size={29} fill="currentColor" />
           </div>
           <div className="min-w-0 flex-1 text-left">
-            <p className="text-[0.72rem] font-black uppercase tracking-wide text-[#53657f]">Current Rank</p>
+            <p className="text-[0.72rem] font-black uppercase tracking-wide text-[#53657f]">{t("profile.current_rank")}</p>
             <h3 className="text-base font-black text-[#061835]">{currentRank.name}</h3>
           </div>
           <div className="text-right">
             <p className="text-sm font-black text-[#061835]">
               {user.xp_total.toLocaleString()} / {rankTarget.toLocaleString()}
             </p>
-            <p className="mt-1 text-xs font-bold text-[#53657f]">XP to {nextRank?.shortName ?? "Legend"}</p>
+            <p className="mt-1 text-xs font-bold text-[#53657f]">{t("profile.xp_to", { rank: nextRank?.shortName ?? "Legend" })}</p>
           </div>
         </div>
         <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-[#edf1f7]">
@@ -104,16 +106,16 @@ function ProfileComponent() {
       </section>
 
       <section className="mx-auto mt-6 grid grid-cols-3 rounded-[1.75rem] bg-white px-3 py-6 shadow-[0_4px_14px_rgba(15,23,42,0.10)] ring-1 ring-slate-200/80">
-        <ProfileStat label="Guesses" value={guessesPlayed.toLocaleString()} />
-        <ProfileStat label="Correct" value={`${accuracy}%`} separated />
-        <ProfileStat label="Streak" value={`🔥 ${streak}`} separated />
+        <ProfileStat label={t("profile.guesses")} value={guessesPlayed.toLocaleString()} />
+        <ProfileStat label={t("profile.correct")} value={`${accuracy}%`} separated />
+        <ProfileStat label={t("profile.streak")} value={`🔥 ${streak}`} separated />
       </section>
 
       <section className="mt-7">
         <div className="grid grid-cols-3 border-b border-[#d7dfeb]">
-          <TabButton active={activeTab === "activity"} label="Activity" onClick={() => setActiveTab("activity")} />
-          <TabButton active={activeTab === "photos"} label="Photos" onClick={() => setActiveTab("photos")} />
-          <TabButton active={activeTab === "achievements"} label="Awards" onClick={() => setActiveTab("achievements")} />
+          <TabButton active={activeTab === "activity"} label={t("profile.tab_activity")} onClick={() => setActiveTab("activity")} />
+          <TabButton active={activeTab === "photos"} label={t("profile.tab_photos")} onClick={() => setActiveTab("photos")} />
+          <TabButton active={activeTab === "achievements"} label={t("profile.tab_awards")} onClick={() => setActiveTab("achievements")} />
         </div>
 
         {activeTab === "activity" && (
@@ -121,9 +123,9 @@ function ProfileComponent() {
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-slate-100 text-[0.65rem] font-black uppercase tracking-wider text-[#91a0b8]">
-                  <th className="px-4 py-3">Restaurant</th>
-                  <th className="px-4 py-3">Time</th>
-                  <th className="px-4 py-3 text-right">Result</th>
+                  <th className="px-4 py-3">{t("profile.restaurant")}</th>
+                  <th className="px-4 py-3">{t("profile.time")}</th>
+                  <th className="px-4 py-3 text-right">{t("profile.result")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -139,7 +141,7 @@ function ProfileComponent() {
                     <td className="px-4 py-3 text-right">
                       <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[0.65rem] font-black uppercase ${activity.correct ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-600"}`}>
                         {activity.correct ? <CheckCircle2 size={13} /> : <XCircle size={13} />}
-                        {activity.correct ? "Correct" : "Wrong"}
+                        {activity.correct ? t("result.correct") : t("result.wrong")}
                       </span>
                     </td>
                   </tr>
@@ -152,11 +154,11 @@ function ProfileComponent() {
         {activeTab === "photos" && (
           <div className="mt-6">
             {loadingPhotos ? (
-              <EmptyPanel icon={<ImageIcon size={34} />} title="Loading photos..." />
+              <EmptyPanel icon={<ImageIcon size={34} />} title={t("profile.loading_photos")} />
             ) : photoError ? (
-              <EmptyPanel icon={<ImageIcon size={34} />} title="Could not load photos" text={photoError} />
+              <EmptyPanel icon={<ImageIcon size={34} />} title={t("profile.could_not_load_photos")} text={photoError} />
             ) : photos.length === 0 ? (
-              <EmptyPanel icon={<ImageIcon size={34} />} title="No submitted photos" text="Submit restaurant clues and they will appear here." />
+              <EmptyPanel icon={<ImageIcon size={34} />} title={t("profile.no_photos")} text={t("profile.no_photos_desc")} />
             ) : (
               <div className="grid grid-cols-2 gap-4">
                 {photos.map((photo) => (
@@ -169,7 +171,7 @@ function ProfileComponent() {
                       </div>
                     )}
                     <span className={`absolute right-2 top-2 rounded-full px-2.5 py-1.5 text-[0.65rem] font-black uppercase text-white shadow-lg ${photo.status === "approved" ? "bg-emerald-600" : "bg-amber-600"}`}>
-                      {photo.status === "approved" ? "Approved" : "Review"}
+                      {photo.status === "approved" ? t("profile.approved") : t("profile.review")}
                     </span>
                   </div>
                 ))}
@@ -181,8 +183,8 @@ function ProfileComponent() {
         {activeTab === "achievements" && (
           <EmptyPanel
             icon={<Trophy size={40} />}
-            title="Elite Achievements"
-            text="Unlock special badges by guessing hidden gems around Malaysia."
+            title={t("profile.elite_achievements")}
+            text={t("profile.achievements_desc")}
           />
         )}
       </section>
